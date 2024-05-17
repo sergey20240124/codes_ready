@@ -1,3 +1,5 @@
+from datetime import datetime
+
 def calculate_calories_burned(weight_kg, duration_minutes, met_value):
     # Convert duration from minutes to hours
     duration_hours = duration_minutes / 60.0
@@ -29,27 +31,55 @@ def main():
         "walking slowly (2.5 mph)", "light office work", "light housework",
         "sexual activity", "intensive exercises"
     ]
-    
-    print("Choose an activity from the following list:")
-    for i, activity in enumerate(activities, 1):
-        print(f"{i}. {activity}")
-    
-    try:
-        choice = int(input("Enter the number corresponding to your choice: "))
-        if 1 <= choice <= len(activities):
-            selected_activity = activities[choice - 1]
-            weight_kg = float(input("Enter your weight in kg: "))
-            duration_minutes = float(input("Enter the duration of the activity in minutes: "))
-            
-            met_value = get_met_value(selected_activity)
-            if met_value is not None:
-                calories = calculate_calories_burned(weight_kg, duration_minutes, met_value)
-                print(f"Calories burned: {calories:.2f} calories for {duration_minutes} minutes of {selected_activity}")
+
+    total_calories = 0
+
+    print("Whole Day Calorie Calculator")
+    weight_kg = float(input("Enter your weight in kg: "))
+
+    while True:
+        print("\nIf your day is over, choose '0'. Otherwise, choose an activity from the following list:")
+        for i, activity in enumerate(activities, 1):
+            print(f"{i}. {activity}")
+
+        try:
+            choice = int(input("Enter the number corresponding to your choice (or 0 to end the day): "))
+            if choice == 0:
+                break
+            elif 1 <= choice <= len(activities):
+                selected_activity = activities[choice - 1]
+
+                start_time = input("Enter the start time (HH:MM): ")
+                end_time = input("Enter the end time (HH:MM): ")
+
+                try:
+                    start_time = datetime.strptime(start_time, "%H:%M")
+                    end_time = datetime.strptime(end_time, "%H:%M")
+
+                    if start_time >= end_time:
+                        print("End time must be after start time. Please try again.")
+                        continue
+
+                    duration = (end_time - start_time).seconds / 60.0  # Duration in minutes
+                    met_value = get_met_value(selected_activity)
+
+                    if met_value is not None:
+                        calories = calculate_calories_burned(weight_kg, duration, met_value)
+                        total_calories += calories
+                        print(f"Calories burned: {calories:.2f} calories for {duration} minutes of {selected_activity}")
+                    else:
+                        print("Invalid activity selected.")
+                except ValueError:
+                    print("Invalid time format. Please enter times in HH:MM format.")
             else:
-                print("Invalid activity selected.")
-        else:
-            print("Invalid choice. Please select a number from the list.")
-    except ValueError:
-        print("Invalid input. Please enter numerical values where prompted.")
+                print("Invalid choice. Please select a number from the list.")
+        except ValueError:
+            print("Invalid input. Please enter numerical values where prompted.")
+            
+    # Get the current date
+    current_date = datetime.now().strftime("%B %d")
+    
+    print(f"\nTotal calories burned on {current_date}: {total_calories:.2f}")
 
 if __name__ == "__main__":
+    main()
