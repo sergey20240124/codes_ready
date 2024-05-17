@@ -1,0 +1,55 @@
+def calculate_calories_burned(weight_kg, duration_minutes, met_value):
+    # Convert duration from minutes to hours
+    duration_hours = duration_minutes / 60.0
+    # Calculate calories burned
+    calories_burned = met_value * weight_kg * duration_hours
+    return calories_burned
+
+def get_met_value(activity):
+    met_values = {
+        "sleeping": 0.9,
+        "sitting quietly": 1.0,
+        "watching TV": 1.3,
+        "writing": 1.3,
+        "typing, computer work": 1.5,
+        "reading (sitting)": 1.3,
+        "standing quietly": 1.8,
+        "walking slowly (2.5 mph)": 2.8,
+        "light office work": 1.8,
+        "light housework": 2.0,
+        "sexual activity": 2.5,
+        "intensive exercises": 8.0
+    }
+    return met_values.get(activity, None)
+
+def main():
+    activities = [
+        "sleeping", "sitting quietly", "watching TV", "writing",
+        "typing, computer work", "reading (sitting)", "standing quietly",
+        "walking slowly (2.5 mph)", "light office work", "light housework",
+        "sexual activity", "intensive exercises"
+    ]
+    
+    print("Choose an activity from the following list:")
+    for i, activity in enumerate(activities, 1):
+        print(f"{i}. {activity}")
+    
+    try:
+        choice = int(input("Enter the number corresponding to your choice: "))
+        if 1 <= choice <= len(activities):
+            selected_activity = activities[choice - 1]
+            weight_kg = float(input("Enter your weight in kg: "))
+            duration_minutes = float(input("Enter the duration of the activity in minutes: "))
+            
+            met_value = get_met_value(selected_activity)
+            if met_value is not None:
+                calories = calculate_calories_burned(weight_kg, duration_minutes, met_value)
+                print(f"Calories burned: {calories:.2f} calories for {duration_minutes} minutes of {selected_activity}")
+            else:
+                print("Invalid activity selected.")
+        else:
+            print("Invalid choice. Please select a number from the list.")
+    except ValueError:
+        print("Invalid input. Please enter numerical values where prompted.")
+
+if __name__ == "__main__":
