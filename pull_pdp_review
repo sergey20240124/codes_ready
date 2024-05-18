@@ -1,0 +1,29 @@
+
+
+import requests
+from bs4 import BeautifulSoup
+
+# URL of the Amazon product page
+url = 'https://www.amazon.com/Osaki-OS-Monarch-Technology-Connection-Auto-Programs/dp/B07MKPV65R/ref=sxin_16_pa_sp_search_thematic_sspa'
+
+# Set up the headers to mimic a browser visit
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36'
+}
+
+# Send a GET request to fetch the content of the page
+response = requests.get(url, headers=headers)
+soup = BeautifulSoup(response.content, 'html.parser')
+
+# Find the section containing reviews
+reviews_section = soup.find_all('div', {'data-hook': 'review'})
+
+# Extract and print the reviews text
+reviews = []
+for review in reviews_section:
+    review_text = review.find('span', {'data-hook': 'review-body'}).get_text(strip=True)
+    reviews.append(review_text)
+
+# Print the extracted reviews
+for idx, review in enumerate(reviews, start=1):
+    print(f"Review {idx}: {review}\n")
